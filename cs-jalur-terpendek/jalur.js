@@ -1,6 +1,6 @@
 class FindPath {
     constructor() {
-        this.cache = []
+        this.cache = {}
     }
 
     dijkstra(graph, source, dest) {
@@ -11,6 +11,7 @@ class FindPath {
             if (vertices.indexOf(edge[0]) == -1) {
                 vertices.push(edge[0])
             }
+            //buat array baru untuk menampung keterhubungan jika edge[0] masih kosong 
             if (connected[edge[0]] == null) {
                 connected[edge[0]] = []
             }
@@ -19,6 +20,7 @@ class FindPath {
             if (vertices.indexOf(edge[1]) == -1) {
                 vertices.push(edge[1])
             }
+            //buat array baru untuk menampung keterhubungan jika edge[1] masih kosong 
             if (connected[edge[1]] == null) {
                 connected[edge[1]] = []
             }
@@ -28,11 +30,10 @@ class FindPath {
         // console.log(connected)
 
         var jarak = {}
-        var prev = {}
         //inisialisasi
         vertices.forEach((vertex) => {
             jarak[vertex] = Number.POSITIVE_INFINITY
-            prev[vertex] = null
+            this.cache[vertex] = null
         })
         //inisialisasi jarak a= 0 
         jarak[source] = 0
@@ -55,6 +56,7 @@ class FindPath {
             if (jarak[u] == Number.POSITIVE_INFINITY || u == dest) {
                 break;
             }
+
             //ubah lintasan
             if (connected[u] != null) {
                 connected[u].forEach((arr) => {
@@ -62,8 +64,7 @@ class FindPath {
                     //cek apakah jumlah dari awal sampai node saat ini < jarak sebelumnya
                     if (jum < jarak[arr["end"]]) {
                         jarak[arr["end"]] = jum
-                        prev[arr["end"]] = u
-                        // console.log(prev, 'prev')
+                        this.cache[arr["end"]] = u 
                     }
                 })
             }
@@ -71,10 +72,10 @@ class FindPath {
 
         //telusuri listasan yang terbentuk
         var solution = [];
-        while (prev[dest] != null) {
+        while (this.cache[dest] != null) {
             //di masukkan di depannya
             solution.unshift(dest);
-            dest = prev[dest];
+            dest = this.cache[dest];
         }
         solution.unshift(dest);
 
